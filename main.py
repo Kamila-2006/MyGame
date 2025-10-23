@@ -11,14 +11,29 @@ screen = pygame.display.set_mode(window_size)
 background = pygame.image.load("main_menu.png")
 background = pygame.transform.scale(background, window_size)
 
+DARK_TEAL = (37, 68, 68)
+DEEP_STEEL = (57, 85, 96)
 WHITE = (255, 255, 255)
 GRAY = (180, 180, 180)
 LIGHT_BLUE = (100, 160, 255)
 BLACK = (0, 0, 0)
 
+title_font = pygame.font.Font(None, 90)
 font = pygame.font.Font(None, 50)
 
+title_text = "MyGame"
+subtitle_text = "главное меню"
 buttons = ["Новая игра", "Настройки", "Альбом", "Выход"]
+
+def draw_title(surface):
+    text_surf = title_font.render(title_text, True, DARK_TEAL)
+    title_rect = text_surf.get_rect(center=(surface.get_width() // 2, 80))
+    surface.blit(text_surf, title_rect)
+
+def draw_subtitle(surface):
+    text_surf = font.render(subtitle_text, True, DEEP_STEEL)
+    subtitle_rect = text_surf.get_rect(center=(surface.get_width() // 2, 140))
+    surface.blit(text_surf, subtitle_rect)
 
 button_rects = []
 start_y = 300
@@ -29,6 +44,9 @@ for i, text in enumerate(buttons):
 running = True
 while running:
     screen.blit(background, (0, 0))
+
+    draw_title(screen)
+    draw_subtitle(screen)
 
     mouse_pos = pygame.mouse.get_pos()
     for i, rect in enumerate(button_rects):
