@@ -3,6 +3,7 @@ import sys
 
 
 pygame.init()
+clock = pygame.time.Clock()
 
 window_size = (700, 700)
 pygame.display.set_caption("MyGame")
@@ -10,6 +11,8 @@ screen = pygame.display.set_mode(window_size)
 
 background = pygame.image.load("main_menu.png")
 background = pygame.transform.scale(background, window_size)
+
+confirm_exit = False
 
 DARK_TEAL = (37, 68, 68)
 DEEP_STEEL = (57, 85, 96)
@@ -58,6 +61,24 @@ while running:
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
+    if confirm_exit:
+        exit_window = pygame.draw.rect(screen, (240, 240, 240), (200, 250, 300, 200), border_radius=15)
+        exit_text = font.render("Точно выйти?", True, BLACK)
+        exit_rect = exit_text.get_rect(center=(350, 300))
+        screen.blit(exit_text, exit_rect)
+
+        yes_rect = pygame.Rect(230, 370, 100, 50)
+        pygame.draw.rect(screen, LIGHT_BLUE if yes_rect.collidepoint(mouse_pos) else GRAY, yes_rect, border_radius=10)
+        yes_text = font.render("Да", True, BLACK)
+        yes_text_rect = yes_text.get_rect(center=yes_rect.center)
+        screen.blit(yes_text, yes_text_rect)
+
+        no_rect = pygame.Rect(370, 370, 100, 50)
+        pygame.draw.rect(screen, LIGHT_BLUE if no_rect.collidepoint(mouse_pos) else GRAY, no_rect, border_radius=10)
+        no_text = font.render("Нет", True, BLACK)
+        no_text_rect = no_text.get_rect(center=no_rect.center)
+        screen.blit(no_text, no_text_rect)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -67,9 +88,9 @@ while running:
             for i, rect in enumerate(button_rects):
                 if rect.collidepoint(mouse_pos):
                     if buttons[i] == "Выход":
-                        pygame.quit()
-                        sys.exit()
+                        confirm_exit = True
                     else:
                         print(f"Нажата кнопка: {buttons[i]}")
 
     pygame.display.flip()
+    clock.tick(60)
