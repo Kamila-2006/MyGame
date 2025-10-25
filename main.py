@@ -71,34 +71,35 @@ while running:
                 if rect.collidepoint(mouse_pos):
                     if buttons[i] == "Выход":
                         confirm_exit = True
+                        if confirm_exit:
+                            exit_window = pygame.draw.rect(screen, (240, 240, 240), (200, 250, 300, 200),
+                                                           border_radius=15)
+                            exit_text = font.render("Точно выйти?", True, BLACK)
+                            exit_rect = exit_text.get_rect(center=(350, 300))
+                            screen.blit(exit_text, exit_rect)
+
+                            yes_rect = pygame.Rect(230, 370, 100, 50)
+                            pygame.draw.rect(screen, LIGHT_BLUE if yes_rect.collidepoint(mouse_pos) else GRAY, yes_rect,
+                                             border_radius=10)
+                            yes_text = font.render("Да", True, BLACK)
+                            yes_text_rect = yes_text.get_rect(center=yes_rect.center)
+                            screen.blit(yes_text, yes_text_rect)
+
+                            no_rect = pygame.Rect(370, 370, 100, 50)
+                            pygame.draw.rect(screen, LIGHT_BLUE if no_rect.collidepoint(mouse_pos) else GRAY, no_rect,
+                                             border_radius=10)
+                            no_text = font.render("Нет", True, BLACK)
+                            no_text_rect = no_text.get_rect(center=no_rect.center)
+                            screen.blit(no_text, no_text_rect)
+
+                            if yes_rect.collidepoint(mouse_pos):
+                                pygame.quit()
+                                sys.exit()
+                            elif no_rect.collidepoint(mouse_pos):
+                                confirm_exit = False
+
                     else:
                         print(f"Нажата кнопка: {buttons[i]}")
-
-            if confirm_exit:
-                exit_window = pygame.draw.rect(screen, (240, 240, 240), (200, 250, 300, 200), border_radius=15)
-                exit_text = font.render("Точно выйти?", True, BLACK)
-                exit_rect = exit_text.get_rect(center=(350, 300))
-                screen.blit(exit_text, exit_rect)
-
-                yes_rect = pygame.Rect(230, 370, 100, 50)
-                pygame.draw.rect(screen, LIGHT_BLUE if yes_rect.collidepoint(mouse_pos) else GRAY, yes_rect,
-                                 border_radius=10)
-                yes_text = font.render("Да", True, BLACK)
-                yes_text_rect = yes_text.get_rect(center=yes_rect.center)
-                screen.blit(yes_text, yes_text_rect)
-
-                no_rect = pygame.Rect(370, 370, 100, 50)
-                pygame.draw.rect(screen, LIGHT_BLUE if no_rect.collidepoint(mouse_pos) else GRAY, no_rect,
-                                 border_radius=10)
-                no_text = font.render("Нет", True, BLACK)
-                no_text_rect = no_text.get_rect(center=no_rect.center)
-                screen.blit(no_text, no_text_rect)
-
-                if yes_rect.collidepoint(mouse_pos):
-                    pygame.quit()
-                    sys.exit()
-                elif no_rect.collidepoint(mouse_pos):
-                    confirm_exit = False
 
     pygame.display.flip()
     clock.tick(60)
