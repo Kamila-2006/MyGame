@@ -5,7 +5,7 @@ import sys
 pygame.init()
 clock = pygame.time.Clock()
 
-window_size = (700, 700)
+window_size = (800, 700)
 pygame.display.set_caption("MyGame")
 screen = pygame.display.set_mode(window_size)
 
@@ -13,6 +13,7 @@ background = pygame.image.load("main_menu.png")
 background = pygame.transform.scale(background, window_size)
 
 confirm_exit = False
+album = False
 
 DARK_TEAL = (37, 68, 68)
 DEEP_STEEL = (57, 85, 96)
@@ -39,9 +40,9 @@ def draw_subtitle(surface):
     surface.blit(text_surf, subtitle_rect)
 
 button_rects = []
-start_y = 300
+start_y = 280
 for i, text in enumerate(buttons):
-    rect = pygame.Rect(250, start_y + i * 90, 200, 60)
+    rect = pygame.Rect(250, start_y + i * 90, 300, 60)
     button_rects.append(rect)
 
 running = True
@@ -52,6 +53,8 @@ while running:
     draw_subtitle(screen)
 
     mouse_pos = pygame.mouse.get_pos()
+
+    # --- Кнопки меню ---
     for i, rect in enumerate(button_rects):
         color = GRAY if rect.collidepoint(mouse_pos) else LIGHT_BLUE
         pygame.draw.rect(screen, color, rect, border_radius=10)
@@ -61,45 +64,46 @@ while running:
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
+    # --- Окно подтверждения выхода ---
+    if confirm_exit:
+        exit_window = pygame.draw.rect(screen, (240, 240, 240), (250, 250, 300, 200), border_radius=15)
+        exit_text = font.render("Точно выйти?", True, BLACK)
+        exit_rect = exit_text.get_rect(center=(400, 300))
+        screen.blit(exit_text, exit_rect)
+
+        yes_rect = pygame.Rect(290, 365, 100, 50)
+        no_rect = pygame.Rect(410, 365, 100, 50)
+
+        pygame.draw.rect(screen, LIGHT_BLUE if yes_rect.collidepoint(mouse_pos) else GRAY, yes_rect, border_radius=10)
+        pygame.draw.rect(screen, LIGHT_BLUE if no_rect.collidepoint(mouse_pos) else GRAY, no_rect, border_radius=10)
+
+        yes_text = font.render("Да", True, BLACK)
+        no_text = font.render("Нет", True, BLACK)
+        screen.blit(yes_text, yes_text.get_rect(center=yes_rect.center))
+        screen.blit(no_text, no_text.get_rect(center=no_rect.center))
+
+    # --- Обработка событий ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            for i, rect in enumerate(button_rects):
-                if rect.collidepoint(mouse_pos):
-                    if buttons[i] == "Выход":
-                        confirm_exit = True
-                        if confirm_exit:
-                            exit_window = pygame.draw.rect(screen, (240, 240, 240), (200, 250, 300, 200),
-                                                           border_radius=15)
-                            exit_text = font.render("Точно выйти?", True, BLACK)
-                            exit_rect = exit_text.get_rect(center=(350, 300))
-                            screen.blit(exit_text, exit_rect)
-
-                            yes_rect = pygame.Rect(230, 370, 100, 50)
-                            pygame.draw.rect(screen, LIGHT_BLUE if yes_rect.collidepoint(mouse_pos) else GRAY, yes_rect,
-                                             border_radius=10)
-                            yes_text = font.render("Да", True, BLACK)
-                            yes_text_rect = yes_text.get_rect(center=yes_rect.center)
-                            screen.blit(yes_text, yes_text_rect)
-
-                            no_rect = pygame.Rect(370, 370, 100, 50)
-                            pygame.draw.rect(screen, LIGHT_BLUE if no_rect.collidepoint(mouse_pos) else GRAY, no_rect,
-                                             border_radius=10)
-                            no_text = font.render("Нет", True, BLACK)
-                            no_text_rect = no_text.get_rect(center=no_rect.center)
-                            screen.blit(no_text, no_text_rect)
-
-                            if yes_rect.collidepoint(mouse_pos):
-                                pygame.quit()
-                                sys.exit()
-                            elif no_rect.collidepoint(mouse_pos):
-                                confirm_exit = False
-
-                    else:
-                        print(f"Нажата кнопка: {buttons[i]}")
+            if confirm_exit:
+                if yes_rect.collidepoint(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                elif no_rect.collidepoint(mouse_pos):
+                    confirm_exit = False
+            else:
+                for i, rect in enumerate(button_rects):
+                    if rect.collidepoint(mouse_pos):
+                        if buttons[i] == "Альбом":
+                            album = True
+                        elif buttons[i] == "Выход":
+                            confirm_exit = True
+                        else:
+                            print(f"Нажата кнопка: {buttons[i]}")
 
     pygame.display.flip()
     clock.tick(60)
